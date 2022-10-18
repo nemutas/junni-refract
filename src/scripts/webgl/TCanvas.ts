@@ -50,7 +50,7 @@ export class TCanvas extends TCanvasBase {
 
 	private calcScreenCoord() {
 		const { width, height } = this.size
-		return new THREE.Vector2(width * window.devicePixelRatio, height * window.devicePixelRatio)
+		return new THREE.Vector2(width, height).multiplyScalar(window.devicePixelRatio)
 	}
 
 	private createModel() {
