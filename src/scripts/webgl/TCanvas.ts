@@ -34,20 +34,23 @@ export class TCanvas extends TCanvasBase {
 			encoding: THREE.sRGBEncoding,
 		})
 
-		// this.setAxesHelper(2)
-		// this.setOrbitControls()
+		const controls = this.setOrbitControls()
+		controls.enablePan = false
 	}
 
 	private setResize() {
 		this.resizeCallback = () => {
-			const { width, height } = this.size
-
 			const texture = this.assets.image.data as THREE.Texture
 			this.coveredBackgroundTexture(texture)
 
 			const box = this.getMesh<THREE.ShaderMaterial>('box')
-			box.material.uniforms.u_screenCoord.value.set(width, height)
+			box.material.uniforms.u_screenCoord.value.copy(this.calcScreenCoord())
 		}
+	}
+
+	private calcScreenCoord() {
+		const { width, height } = this.size
+		return new THREE.Vector2(width * window.devicePixelRatio, height * window.devicePixelRatio)
 	}
 
 	private createModel() {
@@ -57,7 +60,7 @@ export class TCanvas extends TCanvasBase {
 		const boxMat = new THREE.ShaderMaterial({
 			uniforms: {
 				u_texture: { value: null },
-				u_screenCoord: { value: new THREE.Vector2(this.size.width, this.size.height) },
+				u_screenCoord: { value: this.calcScreenCoord() },
 				u_refractPower: { value: 0.1 },
 				u_transparent: { value: 0.2 },
 			},
